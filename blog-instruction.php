@@ -2,9 +2,11 @@
 /*
 Plugin Name: Blog Instruction
 Description: A plugin to provide instructions for writing blog posts.
-Author: Hridoy Varaby
-Version: 2.0
+Author: Hridoy Varaby | Varabit
+Author URI: https://facebook.com/hridoy.varaby
+Version: 2.1.1
 */
+
 
 // Enable debugging
 error_reporting(E_ALL);
@@ -12,12 +14,22 @@ ini_set('display_errors', 1);
 
 // Admin page callback
 function blog_instruction_settings_page() {
+    $instruction_text = get_option('blog_instruction_text', '');
+    $show_instruction = get_option('blog_instruction_show', ''); // New option
+
     ?>
     <div class="wrap">
         <h2>Blog Instruction Settings</h2>
         <form method="post" action="options.php">
             <?php settings_fields('blog_instruction_settings_group'); ?>
             <?php do_settings_sections('blog_instruction_settings_group'); ?>
+            
+            <!-- Updated inline CSS for padding -->
+            <label for="blog_instruction_show" style="display: block; padding-top: 30px; padding-bottom: 30px;">
+                <input type="checkbox" id="blog_instruction_show" name="blog_instruction_show" <?php checked( $show_instruction, 'on' ); ?> />
+                Show Instructions on Add New Post Page
+            </label>
+
             <?php blog_instruction_editor_callback(); ?>
             <?php submit_button(); ?>
         </form>
@@ -26,10 +38,15 @@ function blog_instruction_settings_page() {
 }
 
 
+
 // Settings initialization
 function blog_instruction_settings_init() {
     register_setting('blog_instruction_settings_group', 'blog_instruction_text');
+    
+    // Save the new option
+    register_setting('blog_instruction_settings_group', 'blog_instruction_show');
 }
+
 
 // Admin menu
 function blog_instruction_add_menu() {
@@ -40,12 +57,13 @@ function blog_instruction_add_menu() {
         add_options_page(
             'Blog Instruction Settings',
             'Blog Instruction',
-            'read',
+            'manage_options',
             'blog_instruction_settings',
             'blog_instruction_settings_page'
         );
     }
 }
+
 
 add_action('admin_menu', 'blog_instruction_add_menu');
 
@@ -58,13 +76,14 @@ function blog_instruction_editor_callback() {
 
 // Meta box for instructions on the Add New Post page
 function blog_instruction_meta_box() {
-    $instruction_text = get_option('blog_instruction_text', ''); // Retrieve saved content
+    $show_instruction = get_option('blog_instruction_show', 'off');
 
-    // Apply formatting and shortcodes
-    $formatted_text = wpautop(do_shortcode($instruction_text));
-
-    echo $formatted_text;
+    if ($show_instruction === 'on') {
+        $instruction_text = get_option('blog_instruction_text', '');
+        echo wpautop(do_shortcode($instruction_text));
+    }
 }
+
 
 
 // Add meta box to post editor screen
