@@ -4,7 +4,7 @@ Plugin Name: Blog Instruction
 Description: A plugin to provide instructions for writing blog posts.
 Author: Hridoy Varaby | Varabit
 Author URI: https://facebook.com/hridoy.varaby
-Version: 2.1.3
+Version: 2.1.4
 */
 
 
