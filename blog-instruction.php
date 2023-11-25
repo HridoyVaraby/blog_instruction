@@ -4,13 +4,37 @@ Plugin Name: Blog Instruction
 Description: A plugin to provide instructions for writing blog posts.
 Author: Hridoy Varaby | Varabit
 Author URI: https://facebook.com/hridoy.varaby
-Version: 2.1.4
+Version: 2.1.5
 */
 
 
 // Enable debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+// Check for required plugins on activation
+function blog_instruction_check_required_plugins() {
+    // Check if Classic Editor plugin is installed and active
+    if (!is_plugin_active('classic-editor/classic-editor.php')) {
+        // Classic Editor is not active, prompt the user to install it
+        add_action('admin_notices', 'blog_instruction_install_classic_editor_notice');
+    }
+}
+
+// Display notice to install Classic Editor
+function blog_instruction_install_classic_editor_notice() {
+    ?>
+    <div class="notice notice-error is-dismissible">
+        <p>
+            <strong>Blog Instruction:</strong>
+            This plugin requires the "Classic Editor" plugin to be installed and activated for full functionality.
+            <a href="<?php echo esc_url(admin_url('plugin-install.php?s=Classic+Editor&tab=search&type=term')); ?>">
+                Install Classic Editor now.
+            </a>
+        </p>
+    </div>
+    <?php
+}
 
 // Admin page callback
 function blog_instruction_settings_page() {
@@ -126,8 +150,9 @@ function blog_instruction_enqueue_scripts() {
 }
 
 // Hook actions and filters
-add_action('admin_menu', 'blog_instruction_add_menu');
+add_action('admin_init', 'blog_instruction_check_required_plugins');
 add_action('admin_init', 'blog_instruction_settings_init');
+add_action('admin_menu', 'blog_instruction_add_menu');
 add_action('add_meta_boxes', 'blog_instruction_add_meta_box');
 add_action('admin_enqueue_scripts', 'blog_instruction_enqueue_scripts');
 
