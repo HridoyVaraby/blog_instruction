@@ -24,15 +24,34 @@ function blog_instruction_settings_page() {
             <?php settings_fields('blog_instruction_settings_group'); ?>
             <?php do_settings_sections('blog_instruction_settings_group'); ?>
             
-            <!-- Updated inline CSS for padding -->
             <label for="blog_instruction_show" style="display: block; padding-top: 30px; padding-bottom: 30px;">
                 <input type="checkbox" id="blog_instruction_show" name="blog_instruction_show" <?php checked( $show_instruction, 'on' ); ?> />
                 Show Instructions on Add New Post Page
             </label>
 
-            <?php blog_instruction_editor_callback(); ?>
+            <!-- Updated inline style for the editor section -->
+            <div id="blog-instruction-editor-section" style="display: <?php echo ($show_instruction === 'on') ? 'block' : 'none'; ?>;">
+                <?php blog_instruction_editor_callback(); ?>
+            </div>
+
             <?php submit_button(); ?>
         </form>
+
+        <!-- Include jQuery script -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+        <script>
+            jQuery(document).ready(function($) {
+                // Add a click event listener to the toggle checkbox
+                $('#blog_instruction_show').on('click', function() {
+                    // Check the state of the toggle
+                    var isChecked = $(this).is(':checked');
+
+                    // Update the visibility of the editor section
+                    $('#blog-instruction-editor-section').toggle(isChecked);
+                });
+            });
+        </script>
     </div>
     <?php
 }
